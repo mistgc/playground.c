@@ -20,7 +20,9 @@ int sum_int(int arr[], size_t arr_len) {
   Vec *v = Vec_from_array(arr, sizeof(int), arr_len);
   int *init_value = (int *)malloc(sizeof(int));
   *init_value = 0;
-  int ret = *(int *)Vec_reduce(v, vec_add_int_handler, init_value);
+  int *pret = (int *)Vec_reduce(v, vec_add_int_handler, init_value);
+  int ret = *pret;
+  free(pret);
   free(init_value);
   Vec_free(v);
   v = NULL;
@@ -31,7 +33,9 @@ int factorial_int(int arr[], size_t arr_len) {
   Vec *v = Vec_from_array(arr, sizeof(int), arr_len);
   int *init_value = (int *)malloc(sizeof(int));
   *init_value = 1;
-  int ret = *(int *)Vec_reduce(v, vec_mult_int_handler, init_value);
+  int *pret = (int *)Vec_reduce(v, vec_mult_int_handler, init_value);
+  int ret = *pret;
+  free(pret);
   free(init_value);
   Vec_free(v);
   v = NULL;
@@ -52,7 +56,9 @@ float sum_float(float arr[], size_t arr_len) {
   Vec *v = Vec_from_array(arr, sizeof(float), arr_len);
   float *init_value = (float *)malloc(sizeof(float));
   *init_value = 0.;
-  float ret = *(float *)Vec_reduce(v, vec_add_float_handler, init_value);
+  float *pret = (float *)Vec_reduce(v, vec_add_float_handler, init_value);
+  float ret = *pret;
+  free(pret);
   free(init_value);
   Vec_free(v);
   v = NULL;
