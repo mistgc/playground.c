@@ -1,7 +1,9 @@
 #ifndef DA_H_
 #define DA_H_
 
+#include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DA_REALLOC(p, s) realloc(p, s)
 #define DA_FREE(p) free(p)
@@ -10,19 +12,33 @@
 
 #define da_Array_push(arr, val)                                                \
   (da_Array_maybe_grow(arr, 1), (arr)[DA_HEADER(arr)->length++] = (val))
-// TODO:
-// #define da_Array_pop(arr)
-// #define da_Array_del(arr, i)
-// #define da_Array_ins(arr, i, v)
-// #define da_Array_last(arr)
-// #define da_Array_free(arr)
+#define da_Array_pop(arr)                                                      \
+  (DA_HEADER(arr)->length--, (arr)[DA_HEADER(arr)->length])
+#define da_Array_last(arr) ((arr)[DA_HEADER(arr)->length - 1])
+#define da_Array_free(arr)                                                     \
+  ((void)((arr) ? DA_FREE(DA_HEADER(arr)) : (void)0), (arr) = NULL)
+#define da_Array_del(arr, i) da_Array_deln(arr, i, 1)
+#define da_Array_deln(arr, i, n)                                               \
+  (memmove(&(arr)[i], &(arr)[i + n],                                           \
+           sizeof *(arr) * (DA_HEADER(arr)->length - n - (i))),                \
+   DA_HEADER(arr)->length -= (n))
+#define da_Array_ins(arr, i, v) (da_Array_insn(arr, i, 1), arr[i] = (v))
+#define da_Array_insn(arr, i, n)                                               \
+  (da_Array_addn(arr, n),                                                      \
+   memmove(&(arr)[i + n], &(arr)[i],                                           \
+           sizeof *(arr) * (DA_HEADER(arr)->length - (n) - (i))))
+#define da_Array_addn(arr, n) ((void)da_Array_addn_index(arr, n))
+#define da_Array_addn_index(arr, n)                                            \
+  (da_Array_maybe_grow(arr, n),                                                \
+   (n) ? (DA_HEADER(arr)->length += (n), DA_HEADER(arr)->length - (n))         \
+       : da_Array_len(arr))
 #define da_Array_maybe_grow(arr, size)                                         \
   ((!(arr) || DA_HEADER(arr)->length + (size) > DA_HEADER(arr)->capacity)      \
        ? (da_Array_grow(arr, size, 0))                                         \
        : 0)
 #define da_Array_grow(arr, size, min_cap)                                      \
   ((arr) = da_Array_growf((arr), sizeof *(arr), (size), (min_cap)))
-#define da_Array_len(arr) ((arr) ? DA_HEADER(arr)->length : 0)
+#define da_Array_len(arr) ((arr) ? (ptrdiff_t)DA_HEADER(arr)->length : 0)
 #define da_Array_cap(arr) ((arr) ? DA_HEADER(arr)->capacity : 0)
 
 typedef struct {
