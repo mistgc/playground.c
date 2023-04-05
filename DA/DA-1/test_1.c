@@ -99,10 +99,28 @@ void test_map_array() {
 #undef PI
 }
 
+void test_filter_array() {
+  int *arr = NULL;
+  da_Array_push(arr, 1);
+  da_Array_push(arr, 2);
+  da_Array_push(arr, 3);
+  da_Array_push(arr, 4);
+
+  int *new_arr = NULL;
+  da_Array_filter(arr, new_arr, item, (item % 2 == 0));
+
+  assert(2 == new_arr[0]);
+  assert(4 == new_arr[1]);
+
+  da_Array_free(arr);
+  da_Array_free(new_arr);
+}
+
 int main(int argc, char *argv[]) {
   test_int_array();
   test_float_array();
   test_map_array();
+  test_filter_array();
 
   printf("done!\n");
 

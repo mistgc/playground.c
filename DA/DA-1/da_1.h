@@ -50,6 +50,16 @@
       da_Array_push(new_arr, new_arr##__item);                                 \
     }                                                                          \
   } while (0)
+#define da_Array_filter(arr, new_arr, item, body)                              \
+  do {                                                                         \
+    size_t arr##__length = da_Array_len(arr);                                  \
+    for (size_t arr##__i = 0; arr##__i < arr##__length; arr##__i++) {          \
+      typeof(*arr) item = arr[arr##__i];                                       \
+      if ((body)) {                                                            \
+        da_Array_push(new_arr, item);                                          \
+      }                                                                        \
+    }                                                                          \
+  } while (0)
 
 typedef struct {
   size_t length;
