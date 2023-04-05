@@ -40,6 +40,16 @@
   ((arr) = da_Array_growf((arr), sizeof *(arr), (size), (min_cap)))
 #define da_Array_len(arr) ((arr) ? (ptrdiff_t)DA_HEADER(arr)->length : 0)
 #define da_Array_cap(arr) ((arr) ? DA_HEADER(arr)->capacity : 0)
+#define da_Array_map(arr, new_arr, item, body)                                 \
+  do {                                                                         \
+    size_t arr##__length = da_Array_len(arr);                                  \
+    for (size_t arr##__i = 0; arr##__i < arr##__length; arr##__i++) {          \
+      typeof(*new_arr) new_arr##__item;                                        \
+      typeof(*arr) item = arr[arr##__i];                                       \
+      new_arr##__item = (body);                                                \
+      da_Array_push(new_arr, new_arr##__item);                                 \
+    }                                                                          \
+  } while (0)
 
 typedef struct {
   size_t length;
