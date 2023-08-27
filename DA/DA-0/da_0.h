@@ -40,7 +40,6 @@
 
 #define da_Array_at(T, self, index) *(T *)__da_Array_at(self, index)
 
-
 typedef struct {
   size_t __count;
   size_t __capability;
