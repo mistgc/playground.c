@@ -1,4 +1,7 @@
+#include <optional>
 #include <stdexcept>
+#include <string>
+#include <unordered_map>
 
 namespace DS {
 
@@ -78,5 +81,50 @@ template <typename T> T LinkStackWithoutHead<T>::peek() const {
 
   return this->top->data;
 }
+
+class StackCalculator {
+private:
+  Stack<char> *_operator;
+  Stack<float> *result;
+  std::unordered_map<char, float> operator_table;
+  std::optional<std::string> expression;
+  int expr_offset;
+  int expr_size;
+
+public:
+  StackCalculator(std::string expr)
+      : expression(std::optional<std::string>{expr}), expr_offset(0),
+        expr_size(expr.size()) {
+
+    StackCalculator();
+  }
+
+  StackCalculator() : expr_offset(0) {
+    this->_operator = new LinkStackWithoutHead<char>();
+    this->result = new LinkStackWithoutHead<float>();
+
+    /*
+     * operator   weight
+     *    +          1
+     *    -          1
+     *    *          1
+     *    /          1
+     *    (        0xfff
+     *    )        0xfff
+     */
+    this->operator_table.insert(std::pair<char, float>('-', 1));
+    this->operator_table.insert(std::pair<char, float>('+', 1));
+    this->operator_table.insert(std::pair<char, float>('*', 2));
+    this->operator_table.insert(std::pair<char, float>('/', 2));
+    this->operator_table.insert(std::pair<char, float>('(', 0xfff));
+    this->operator_table.insert(std::pair<char, float>(')', 0xfff));
+  }
+
+  StackCalculator(StackCalculator &&) = delete;
+  StackCalculator(const StackCalculator &) = delete;
+
+  float calculate();
+  float calculate(std::string expr);
+};
 
 } // namespace DS
